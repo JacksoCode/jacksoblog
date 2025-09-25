@@ -9,11 +9,13 @@ class HTMLNode:
         self.props = props
 
     def to_html(self):
-        raise NotImplemented
+        raise NotImplementedError
 
     def props_to_html(self):
+        if not self.props:
+            return ""
         parts = []
-        for key in sorted(self.props.key()):
+        for key in sorted(self.props.keys()):
             value = self.props[key]
             parts.append(f'{key}="{str(value)}"')
         return (" " + " ".join(parts)) if parts else ""
@@ -39,3 +41,18 @@ class HTMLNode:
             f"children_preview={child_tags}, "
             f"props={self.props!r})"
         )
+
+
+class LeafNode(HTMLNode):
+    # tag and value are required for LeafNode
+    # props remains optional
+    def __init__(self, tag=None, value=None, children=None, props=None):
+        super().__init__(tag, value, children, props)
+
+    def to_html(self):
+        if self.value is None:
+            raise ValueError
+        if self.tag is None:
+            return str(self.value)
+        props_str = super().props_to_html()
+        return f"<{self.tag}{props_str}>{self.value}</{self.tag}>"

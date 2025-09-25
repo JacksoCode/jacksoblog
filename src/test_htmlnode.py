@@ -1,6 +1,6 @@
 import unittest
 
-from htmlnode import HTMLNode
+from htmlnode import HTMLNode, LeafNode
 
 
 class TestHTMLNode(unittest.TestCase):
@@ -41,3 +41,19 @@ class TestHTMLNode(unittest.TestCase):
             tag="a", children=a_children, props={"href": "https://boot.dev"}
         )
         self.assertEqual(node, node2)
+
+    def test_leaf_to_html_p(self):
+        node = LeafNode("p", "Hello, world!")
+        self.assertEqual(node.to_html(), "<p>Hello, world!</p>")
+
+    def test_leaf_to_html_a(self):
+        node = LeafNode("a", value="whats a link", props={"href": "https://boot.dev"})
+        self.assertEqual(node.to_html(), '<a href="https://boot.dev">whats a link</a>')
+
+    def test_leaf_to_html_b(self):
+        node = LeafNode("b", "Bold me baby!")
+        self.assertEqual(node.to_html(), "<b>Bold me baby!</b>")
+
+    def test_leaf_to_html_no_tag(self):
+        node = LeafNode(tag=None, value="Maidenless AND tagless... pathetic")
+        self.assertEqual(node.to_html(), "Maidenless AND tagless... pathetic")
