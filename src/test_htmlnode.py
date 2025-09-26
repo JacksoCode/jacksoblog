@@ -1,9 +1,10 @@
 import unittest
 
-from htmlnode import HTMLNode, LeafNode
+from htmlnode import HTMLNode, LeafNode, ParentNode
 
 
 class TestHTMLNode(unittest.TestCase):
+    # Test for HTMLNode
     def test_eq(self):
         node = HTMLNode(value="This is plain text")
         node2 = HTMLNode(value="This is plain text")
@@ -42,12 +43,16 @@ class TestHTMLNode(unittest.TestCase):
         )
         self.assertEqual(node, node2)
 
+    # Test for LeafNode
+
     def test_leaf_to_html_p(self):
         node = LeafNode("p", "Hello, world!")
         self.assertEqual(node.to_html(), "<p>Hello, world!</p>")
 
     def test_leaf_to_html_a(self):
-        node = LeafNode("a", value="whats a link", props={"href": "https://boot.dev"})
+        node = LeafNode(
+            tag="a", value="whats a link", props={"href": "https://boot.dev"}
+        )
         self.assertEqual(node.to_html(), '<a href="https://boot.dev">whats a link</a>')
 
     def test_leaf_to_html_b(self):
@@ -57,3 +62,53 @@ class TestHTMLNode(unittest.TestCase):
     def test_leaf_to_html_no_tag(self):
         node = LeafNode(tag=None, value="Maidenless AND tagless... pathetic")
         self.assertEqual(node.to_html(), "Maidenless AND tagless... pathetic")
+
+    # Test for ParentNode
+
+    def test_to_html_with_children(self):
+        child_node = LeafNode("span", "child")
+        parent_node = ParentNode("div", [child_node])
+        self.assertEqual(parent_node.to_html(), "<div><span>child</span></div>")
+
+    def test_to_html_with_children_with_link(self):
+        child_node = LeafNode("b", "child")
+        parent_node = ParentNode("a", [child_node], {"href": "https://boot.dev"})
+        self.assertEqual(
+            parent_node.to_html(), '<a href="https://boot.dev"><b>child</b></a>'
+        )
+
+    def test_to_html_with_grandchildren(self):
+        grandchild_node = LeafNode("b", "grandchild")
+        child_node = ParentNode("span", [grandchild_node])
+        parent_node = ParentNode("div", [child_node])
+        self.assertEqual(
+            parent_node.to_html(),
+            "<div><span><b>grandchild</b></span></div>",
+        )
+
+    def test_to_html_with_grandchildren_with_link(self):
+        grandchild_node = LeafNode("b", "grandchild")
+        child_node = ParentNode("span", [grandchild_node])
+        parent_node = ParentNode("div", [child_node])
+        grand_parent_node = ParentNode("a", [parent_node], {"href": "https://boot.dev"})
+        self.assertEqual(
+            grand_parent_node.to_html(),
+            '<a href="https://boot.dev"><div><span><b>grandchild</b></span></div></a>',
+        )
+
+    def test_to_html_with_no_children(self):
+        with self.assertRaisesRegex(ValueError, "invalid HTML: no children"):
+            no_child_node = ParentNode("b", children=None)
+            no_child_node.to_html()
+
+    def test_to_html_with_no_tag(self):
+        with self.assertRaisesRegex(ValueError, "invalid HTML: no tag"):
+            no_tag_node = ParentNode(tag=None, children="tagless")
+            no_tag_node.to_html()
+
+    def test_to_html_with_granchildren_no_chld(self):
+        with self.assertRaisesRegex(ValueError, "invalid HTML: no tag"):
+            grandchild_node = LeafNode("b", "grandchild")
+            no_tag_child_node = ParentNode(None, [grandchild_node])
+            parent_node = ParentNode("b", [no_tag_child_node])
+            parent_node.to_html()
