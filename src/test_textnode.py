@@ -2,6 +2,8 @@ import unittest
 
 from textnode import TextNode, TextType, text_node_to_html_node
 
+from splitdelim import split_nodes_delimiter
+
 
 class TestTextNode(unittest.TestCase):
     def test_eq(self):
@@ -51,6 +53,37 @@ class TestTextNode(unittest.TestCase):
         self.assertEqual(
             html.props, {"src": "https://img/bear.png", "alt": "a cute bear"}
         )
+
+    def test_split_code(self):
+        node = TextNode("This is text with a `code block` word", TextType.TEXT)
+        new_nodes = split_nodes_delimiter([node], "`", TextType.CODE)
+        self.assertEqual(new_nodes[0], TextNode("This is text with a ", TextType.TEXT))
+        self.assertEqual(new_nodes[1], TextNode("code block", TextType.CODE))
+        self.assertEqual(new_nodes[2], TextNode(" word", TextType.TEXT))
+
+    def test_split_bold(self):
+        node = TextNode("This is text with a **bold** word", TextType.TEXT)
+        new_nodes = split_nodes_delimiter([node], "**", TextType.BOLD)
+        self.assertEqual(new_nodes[0], TextNode("This is text with a ", TextType.TEXT))
+        self.assertEqual(new_nodes[1], TextNode("bold", TextType.BOLD))
+        self.assertEqual(new_nodes[2], TextNode(" word", TextType.TEXT))
+
+    def test_split_italic(self):
+        node = TextNode("This is text with an _italic_ word", TextType.TEXT)
+        new_nodes = split_nodes_delimiter([node], "_", TextType.ITALIC)
+        self.assertEqual(new_nodes[0], TextNode("This is text with an ", TextType.TEXT))
+        self.assertEqual(new_nodes[1], TextNode("italic", TextType.ITALIC))
+        self.assertEqual(new_nodes[2], TextNode(" word", TextType.TEXT))
+
+    def test_split_not_text(self):
+        node = TextNode("a bold word", TextType.BOLD)
+        new_nodes = split_nodes_delimiter([node], "**", TextType.BOLD)
+        self.assertEqual(new_nodes[0], TextNode("a bold word", TextType.BOLD))
+
+    def test_split_low_delim(self):
+        with self.assertRaises(Exception):
+            node = TextNode("a **bold word", TextType.TEXT)
+            split_nodes_delimiter([node], "**", TextType.BOLD)
 
 
 if __name__ == "__main__":
