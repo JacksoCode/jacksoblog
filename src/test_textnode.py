@@ -2,7 +2,9 @@ import unittest
 
 from textnode import TextNode, TextType, text_node_to_html_node
 
-from splitdelim import split_nodes_delimiter
+from splitter import split_nodes_delimiter
+
+from regex_extractor import extract_markdown_images, extract_markdown_links
 
 
 class TestTextNode(unittest.TestCase):
@@ -84,6 +86,18 @@ class TestTextNode(unittest.TestCase):
         with self.assertRaises(Exception):
             node = TextNode("a **bold word", TextType.TEXT)
             split_nodes_delimiter([node], "**", TextType.BOLD)
+
+    def test_extract_markdown_images(self):
+        matches = extract_markdown_images(
+            "This is text with an ![image](https://i.imgur.com/zjjcJKZ.png)"
+        )
+        self.assertListEqual([("image", "https://i.imgur.com/zjjcJKZ.png")], matches)
+
+    def test_extract_markdown_links(self):
+        matches = extract_markdown_links(
+            "This is text with a ![link](https://www.boot.dev)"
+        )
+        self.assertListEqual([("link", "https://www.boot.dev")], matches)
 
 
 if __name__ == "__main__":
