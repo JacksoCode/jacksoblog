@@ -1,6 +1,8 @@
 import unittest
 
+
 from textnode import TextNode, TextType, text_node_to_html_node
+
 
 from splitter import (
     split_nodes_delimiter,
@@ -10,6 +12,8 @@ from splitter import (
 )
 
 from regex_extractor import extract_markdown_images, extract_markdown_links
+
+from markdowntoblocks import markdown_to_blocks
 
 
 class TestTextNode(unittest.TestCase):
@@ -363,6 +367,51 @@ class TestTextNode(unittest.TestCase):
                 TextNode("!", TextType.TEXT),
             ],
             new_nodes,
+        )
+
+    def test_markdown_to_blocks(self):
+        md = """
+This is **bolded** paragraph
+
+This is another paragraph with _italic_ text and `code` here
+This is the same paragraph on a new line
+
+- This is a list
+- with items
+"""
+        blocks = markdown_to_blocks(md)
+        self.assertEqual(
+            blocks,
+            [
+                "This is **bolded** paragraph",
+                "This is another paragraph with _italic_ text and `code` here\nThis is the same paragraph on a new line",
+                "- This is a list\n- with items",
+            ],
+        )
+
+    def test_markdown_to_blocks_extra_indents(self):
+        md = """
+This is **bolded** paragraph
+
+This is another paragraph with _italic_ text and `code` here
+This is the same paragraph on a new line
+
+- This is a list
+- with items
+
+
+
+Then here is more stuff after too many new lines
+"""
+        blocks = markdown_to_blocks(md)
+        self.assertEqual(
+            blocks,
+            [
+                "This is **bolded** paragraph",
+                "This is another paragraph with _italic_ text and `code` here\nThis is the same paragraph on a new line",
+                "- This is a list\n- with items",
+                "Then here is more stuff after too many new lines",
+            ],
         )
 
 
