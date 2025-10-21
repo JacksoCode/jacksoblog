@@ -13,7 +13,7 @@ from splitter import (
 
 from regex_extractor import extract_markdown_images, extract_markdown_links
 
-from markdowntoblocks import markdown_to_blocks
+from markdowntoblocks import block_to_block_type, markdown_to_blocks, BlockType
 
 
 class TestTextNode(unittest.TestCase):
@@ -411,6 +411,48 @@ Then here is more stuff after too many new lines
                 "This is another paragraph with _italic_ text and `code` here\nThis is the same paragraph on a new line",
                 "- This is a list\n- with items",
                 "Then here is more stuff after too many new lines",
+            ],
+        )
+
+    def test_markdown_to_blocks_classifiers(self):
+        md = """
+### This is a heading 
+
+``` 
+This is a code block beep boop 
+```
+
+This is **bolded** paragraph
+
+This is another paragraph with _italic_ text and `code` here
+This is the same paragraph on a new line
+
+> This is a quote
+
+- This is an unordered list
+- with items
+
+1. This is an ordered list
+2. with items 
+"""
+        blocks = markdown_to_blocks(md)
+        block_types = block_to_block_type(blocks)
+        self.assertEqual(
+            block_types,
+            [
+                ("### This is a heading", BlockType.HEADING),
+                ("``` \nThis is a code block beep boop \n```", BlockType.CODE),
+                ("This is **bolded** paragraph", BlockType.PARAGRAGH),
+                (
+                    "This is another paragraph with _italic_ text and `code` here\nThis is the same paragraph on a new line",
+                    BlockType.PARAGRAGH,
+                ),
+                ("> This is a quote", BlockType.QUOTE),
+                (
+                    "- This is an unordered list\n- with items",
+                    BlockType.UNORDERED_LIST,
+                ),
+                ("1. This is an ordered list\n2. with items", BlockType.ORDERED_LIST),
             ],
         )
 
