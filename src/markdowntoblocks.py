@@ -34,11 +34,11 @@ def block_to_block_type(blocks):
             and block.count("#") >= 1
             and block.count("#") <= 6
         ):
-            buffer_list.append((block, BlockType.HEADING))
+            buffer_list.append(BlockType.HEADING)
         elif block[:3] == "```" and block[-3:] == "```":
-            buffer_list.append((block, BlockType.CODE))
+            buffer_list.append(BlockType.CODE)
         elif block[ind] == ">" and block[ind + 1] == " ":
-            buffer_list.append((block, BlockType.QUOTE))
+            buffer_list.append(BlockType.QUOTE)
         elif block[ind] == "-" and block[ind + 1] == " ":
             lines = block.split("\n")
             line_bool = True
@@ -51,9 +51,9 @@ def block_to_block_type(blocks):
                     else:
                         line_bool = False
             if line_bool:
-                buffer_list.append((block, BlockType.UNORDERED_LIST))
+                buffer_list.append(BlockType.UNORDERED_LIST)
             else:
-                buffer_list.append((block, BlockType.PARAGRAGH))
+                buffer_list.append(BlockType.PARAGRAGH)
         elif block[0].isdigit():
             lines = block.split("\n")
             counter = 1
@@ -71,10 +71,10 @@ def block_to_block_type(blocks):
                     else:
                         line_bool = False
             if line_bool:
-                buffer_list.append((block, BlockType.ORDERED_LIST))
+                buffer_list.append(BlockType.ORDERED_LIST)
             else:
-                buffer_list.append((block, BlockType.PARAGRAGH))
+                buffer_list.append(BlockType.PARAGRAGH)
         else:
-            buffer_list.append((block, BlockType.PARAGRAGH))
+            buffer_list.append(BlockType.PARAGRAGH)
         new_block_list.extend(buffer_list)
     return new_block_list

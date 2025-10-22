@@ -440,19 +440,13 @@ This is the same paragraph on a new line
         self.assertEqual(
             block_types,
             [
-                ("### This is a heading", BlockType.HEADING),
-                ("``` \nThis is a code block beep boop \n```", BlockType.CODE),
-                ("This is **bolded** paragraph", BlockType.PARAGRAGH),
-                (
-                    "This is another paragraph with _italic_ text and `code` here\nThis is the same paragraph on a new line",
-                    BlockType.PARAGRAGH,
-                ),
-                ("> This is a quote", BlockType.QUOTE),
-                (
-                    "- This is an unordered list\n- with items",
-                    BlockType.UNORDERED_LIST,
-                ),
-                ("1. This is an ordered list\n2. with items", BlockType.ORDERED_LIST),
+                BlockType.HEADING,
+                BlockType.CODE,
+                BlockType.PARAGRAGH,
+                BlockType.PARAGRAGH,
+                BlockType.QUOTE,
+                BlockType.UNORDERED_LIST,
+                BlockType.ORDERED_LIST,
             ],
         )
 
