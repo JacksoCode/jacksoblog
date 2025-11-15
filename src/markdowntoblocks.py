@@ -62,14 +62,20 @@ def block_to_block_type(blocks):
                 i = 0
                 while i < len(line) and line[i].isdigit():
                     i += 1
-                    if i + 1 < len(line) and line[i] == "." and line[i + 1] == " ":
-                        char_to_int = int(line[0:i])
-                        if char_to_int != counter:
-                            line_bool = False
-                        if char_to_int == counter:
-                            counter += 1
-                    else:
+                if i == 0:
+                    line_bool = False
+                elif (
+                    i + 1 >= len(line)
+                    or line[i] != "."
+                    or (i + 1 >= len(line) or line[i + 1] != " ")
+                ):
+                    line_bool = False
+                else:
+                    num = int(line[:i])
+                    if num != counter:
                         line_bool = False
+                    else:
+                        counter += 1
             if line_bool:
                 buffer_list.append(BlockType.ORDERED_LIST)
             else:

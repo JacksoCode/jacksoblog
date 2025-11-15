@@ -31,7 +31,7 @@ class TextNode:
 
 
 def text_node_to_html_node(node):
-    if node.text_type is None:
+    if node.text_type == None:
         raise Exception("HTML error: no text type passed")
     if node.text_type == TextType.TEXT:
         return LeafNode(tag=None, value=node.text)
