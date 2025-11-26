@@ -1,21 +1,42 @@
 import os
-from os.path import isfile
 import shutil
 
-directory = os.getcwd()
+
+def stat_to_pub():
+    source = "static"
+    destination = "public"
+
+    if os.path.exists(destination):
+        shutil.rmtree(destination)
+        print("Old directory", destination, "deleted..")
+        print("-")
+        print("-")
+    os.mkdir(destination)
+    print("New directory", destination, "created...")
+    print("-")
+    print("-")
+    copy_stat_contents(os.path.abspath(source), os.path.abspath(destination))
+    return "Copying complete!"
 
 
-def static_to_public(content):
-    to_copy = []
-    files = os.listdir(content)
-    for file in files:
-        path = f"{content}/{file}"
-        if os.path.isfile(path):
-            to_copy.append(path)
+def copy_stat_contents(source, destination):
+    source_list = os.listdir(source)
+
+    for file in source_list:
+        source_file = os.path.join(source, file)
+        relative_path = os.path.relpath(source_file, source)
+        destination_file = os.path.join(destination, relative_path)
+        if not os.path.isfile(source_file):
+            os.mkdir(destination_file)
+            copy_stat_contents(source_file, destination_file)
+            print("Directory", file, "added to", os.path.relpath(destination), "...")
+            print("-")
+            print("-")
         else:
-            to_copy.append(path)
-            to_copy.extend(static_to_public(path))
-    return to_copy
+            shutil.copy(source_file, destination_file)
+            print("Copying from", file, "to", os.path.relpath(destination), "...")
+            print("-")
+            print("-")
 
 
-print(static_to_public(f"{directory}/static"))
+print(stat_to_pub())
