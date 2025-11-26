@@ -37,6 +37,3 @@ def copy_stat_contents(source, destination):
             print("Copying from", file, "to", os.path.relpath(destination), "...")
             print("-")
             print("-")
-
-
-print(stat_to_pub())
