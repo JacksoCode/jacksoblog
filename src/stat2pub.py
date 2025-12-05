@@ -8,15 +8,21 @@ def stat_to_pub():
 
     if os.path.exists(destination):
         shutil.rmtree(destination)
+        print()
         print("Old directory", destination, "deleted..")
-        print("-")
-        print("-")
+        print()
+        print("|||||||||||||||||||||||||||||||||||||||")
     os.mkdir(destination)
+    print()
     print("New directory", destination, "created...")
-    print("-")
-    print("-")
+    print()
+    print("|||||||||||||||||||||||||||||||||||||||")
     copy_stat_contents(os.path.abspath(source), os.path.abspath(destination))
-    return "Copying complete!"
+    print()
+    print("=================")
+    print("Copying complete!")
+    print("=================")
+    return "place holder string"
 
 
 def copy_stat_contents(source, destination):
@@ -29,11 +35,13 @@ def copy_stat_contents(source, destination):
         if not os.path.isfile(source_file):
             os.mkdir(destination_file)
             copy_stat_contents(source_file, destination_file)
+            print()
             print("Directory", file, "added to", os.path.relpath(destination), "...")
-            print("-")
-            print("-")
+            print()
+            print("|||||||||||||||||||||||||||||||||||||||")
         else:
             shutil.copy(source_file, destination_file)
+            print()
             print("Copying from", file, "to", os.path.relpath(destination), "...")
-            print("-")
-            print("-")
+            print()
+            print("|||||||||||||||||||||||||||||||||||||||")

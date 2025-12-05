@@ -27,7 +27,8 @@ def split_nodes_delimiter(old_nodes, delimiter, text_type):
 def split_nodes_images(old_nodes):
     new_nodes = []
     for node in old_nodes:
-        if "![" not in node.text:
+        image_extr = extract_markdown_images(node.text)
+        if not image_extr:
             new_nodes.append(node)
         else:
             buffer_nodes = []
@@ -47,11 +48,11 @@ def split_nodes_images(old_nodes):
 def split_nodes_link(old_nodes):
     new_nodes = []
     for node in old_nodes:
-        if "https:" not in node.text:
+        link_extr = extract_markdown_links(node.text)
+        if not link_extr:
             new_nodes.append(node)
         else:
             buffer_nodes = []
-            link_extr = extract_markdown_links(node.text)
             split_text = re.split(r"\[.*?\]\(.*?\)", node.text)
             for i in range(len(link_extr)):
                 buffer_nodes.append(TextNode(split_text[i], TextType.TEXT))
