@@ -2,10 +2,7 @@ import os
 import shutil
 
 
-def stat_to_pub():
-    source = "static"
-    destination = "public"
-
+def stat_to_pub(source, destination):
     if os.path.exists(destination):
         shutil.rmtree(destination)
         print()

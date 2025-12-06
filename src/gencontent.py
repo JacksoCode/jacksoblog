@@ -13,7 +13,7 @@ def extract_title(markdown):
     raise Exception("No valid header found")
 
 
-def generate_page(from_path, template_path, dest_path):
+def generate_page(from_path, template_path, dest_path, basepath):
     print()
     print(f"Generating page from {from_path} to {dest_path} using {template_path}...")
     print()
@@ -33,6 +33,8 @@ def generate_page(from_path, template_path, dest_path):
 
     template_contents = template_contents.replace("{{ Title }}", title)
     template_contents = template_contents.replace("{{ Content }}", html)
+    template_contents = template_contents.replace('href="/', f'href="{basepath}')
+    template_contents = template_contents.replace('src="/', f'src="{basepath}')
 
     dest_dir = os.path.dirname(dest_path)
     if dest_dir != "":
@@ -43,7 +45,7 @@ def generate_page(from_path, template_path, dest_path):
     to_file.close()
 
 
-def generate_pages_recursive(dir_path_content, template_path, dest_dir_path):
+def generate_pages_recursive(dir_path_content, template_path, dest_dir_path, basepath):
     source = os.listdir(dir_path_content)
     relative_path = Path(dir_path_content)
     destination_path = Path(dest_dir_path)
@@ -52,6 +54,8 @@ def generate_pages_recursive(dir_path_content, template_path, dest_dir_path):
         file_path = relative_path / file
         new_path = destination_path / file
         if not os.path.isfile(file_path):
-            generate_pages_recursive(file_path, template_path, new_path)
+            generate_pages_recursive(file_path, template_path, new_path, basepath)
         else:
-            generate_page(file_path, template_path, new_path.with_suffix(".html"))
+            generate_page(
+                file_path, template_path, new_path.with_suffix(".html"), basepath
+            )
